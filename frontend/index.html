@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ATS Resume Scanner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📄 ATS Resume Scanner</h1>
+      <p>AI-Powered Resume Analysis & Ranking System</p>
+    </div>
+
+    <div class="card">
+      <div class="upload-section">
+        <div class="hr-config" style="margin-bottom:20px; text-align:left">
+          <h3>HR Requirements</h3>
+          <label>Job Role</label>
+          <input id="jobRole" type="text" placeholder="e.g., Backend Developer" style="width:100%; padding:10px; margin:6px 0;" />
+          <label>Required Skills (comma separated)</label>
+          <input id="requiredSkills" type="text" placeholder="e.g., Node.js, Express, MongoDB" style="width:100%; padding:10px; margin:6px 0;" />
+          <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <div style="flex:1">
+              <label>Min Degree (optional)</label>
+              <select id="minDegree" style="width:100%; padding:10px; margin:6px 0;">
+                <option value="">None</option>
+                <option>Bachelors</option>
+                <option>Masters</option>
+                <option>PhD</option>
+              </select>
+            </div>
+            <div style="flex:1">
+              <label>Min Experience (years, optional)</label>
+              <input id="minExp" type="number" min="0" step="1" placeholder="e.g., 2" style="width:100%; padding:10px; margin:6px 0;" />
+            </div>
+          </div>
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-icon">📤</div>
+          <div class="upload-text">
+            <h3>Upload Resume Files</h3>
+            <p>Drop PDF or DOCX files here or click to browse</p>
+            <p style="font-size: 0.9rem; color: #999;">Maximum 500 files • Supported formats: PDF, DOCX</p>
+          </div>
+        </div>
+        <input type="file" id="fileInput" multiple accept=".pdf,.docx" />
+
+        <div class="file-info" id="fileInfo">
+          <p><strong id="fileCount">0</strong> files selected</p>
+          <button class="btn" id="processBtn" onclick="processResumes()">🔍 Start ATS Analysis</button>
+        </div>
+
+        <div class="alert alert-error" id="errorAlert"></div>
+        <div class="alert alert-success" id="successAlert"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="processing" id="processingSection">
+        <div class="spinner"></div>
+        <h3>Analyzing Resumes...</h3>
+        <p>Extracting data, checking ATS compatibility, and ranking candidates</p>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p id="progressText">Processing: 0 / 0 resumes</p>
+      </div>
+    </div>
+
+    <div class="card results-section" id="resultsSection">
+      <div class="results-header">
+        <div>
+          <h3>ATS Analysis Results</h3>
+          <p>Top candidates ranked by ATS score</p>
+        </div>
+        <button class="btn download-btn" onclick="downloadReport()">📥 Download Report</button>
+      </div>
+
+      <div class="table-container">
+        <table id="resultsTable">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Candidate Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Degree</th>
+              <th>Experience (yrs)</th>
+              <th>Skills %</th>
+              <th>Edu %</th>
+              <th>Exp %</th>
+              <th>ATS %</th>
+              <th>Total %</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h4>Smart Parsing</h4>
+        <p>Extracts candidate data, skills, education, and experience from PDF/DOCX files using heuristics</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✅</div>
+        <h4>ATS Compatibility</h4>
+        <p>Identifies formatting issues and ATS-friendliness problems that could cause resume rejection</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⭐</div>
+        <h4>Smart Ranking</h4>
+        <p>Scores and ranks candidates based on skills relevance, education, experience, and ATS compatibility</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
