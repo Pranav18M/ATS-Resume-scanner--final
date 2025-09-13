@@ -151,3 +151,9 @@ async function downloadReport() {
     showAlert('Failed to download report.', 'error');
   }
 }
+async function getElementById() {
+  let res=await
+  fetch("https://ats-resume-scanner-backend.onrender.com/api/hello")
+  let data =awaitres.json();
+  alert(data.message);
+  }
