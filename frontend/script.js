@@ -150,7 +150,6 @@ async function downloadReport() {
   } catch (e) {
     showAlert('Failed to download report.', 'error');
   }
-}
 async function getElementById() {
   let res=await
   fetch("https://ats-resume-scanner-backend.onrender.com/api/hello")
