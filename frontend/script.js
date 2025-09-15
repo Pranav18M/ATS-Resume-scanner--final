@@ -15,47 +15,51 @@ uploadArea.addEventListener('dragleave', handleDragLeave);
 fileInput.addEventListener('change', handleFileSelect);
 
 function handleDragOver(e) {
-    e.preventDefault();
-    uploadArea.classList.add('dragover');
+  e.preventDefault();
+  uploadArea.classList.add('dragover');
 }
 function handleDragLeave(e) {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
 }
 function handleDrop(e) {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
-    const files = Array.from(e.dataTransfer.files);
-    processFileList(files);
+  e.preventDefault();
+  uploadArea.classList.remove('dragover');
+  const files = Array.from(e.dataTransfer.files);
+  processFileList(files);
 }
 function handleFileSelect(e) {
-    const files = Array.from(e.target.files);
-    processFileList(files);
+  const files = Array.from(e.target.files);
+  processFileList(files);
 }
 function processFileList(files) {
-    const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/msword'];
-    const validFiles = files.filter(file => validTypes.includes(file.type));
-    
-    if (validFiles.length !== files.length) {
-        showAlert('Some files were rejected. Only PDF and DOCX files are accepted.', 'error');
-    }
-    if (validFiles.length > 500) {
-        showAlert('Maximum 500 files allowed. Only first 500 files will be processed.', 'error');
-        validFiles.splice(500);
-    }
-    if (validFiles.length > 0) {
-        uploadedFiles = validFiles;
-        fileCount.textContent = validFiles.length;
-        fileInfo.style.display = 'block';
-        showAlert(`${validFiles.length} files ready for processing.`, 'success');
-    }
+  const validTypes = [
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/msword'
+  ];
+  const validFiles = files.filter(file => validTypes.includes(file.type));
+
+  if (validFiles.length !== files.length) {
+    showAlert('Some files were rejected. Only PDF and DOCX files are accepted.', 'error');
+  }
+  if (validFiles.length > 500) {
+    showAlert('Maximum 500 files allowed. Only first 500 files will be processed.', 'error');
+    validFiles.splice(500);
+  }
+  if (validFiles.length > 0) {
+    uploadedFiles = validFiles;
+    fileCount.textContent = validFiles.length;
+    fileInfo.style.display = 'block';
+    showAlert(`${validFiles.length} files ready for processing.`, 'success');
+  }
 }
 
 function showAlert(message, type) {
-    const alertEl = document.getElementById(type === 'error' ? 'errorAlert' : 'successAlert');
-    alertEl.textContent = message;
-    alertEl.style.display = 'block';
-    setTimeout(() => { alertEl.style.display = 'none'; }, 5000);
+  const alertEl = document.getElementById(type === 'error' ? 'errorAlert' : 'successAlert');
+  alertEl.textContent = message;
+  alertEl.style.display = 'block';
+  setTimeout(() => { alertEl.style.display = 'none'; }, 5000);
 }
 
 // Call backend server
@@ -84,14 +88,17 @@ async function processResumes() {
   uploadedFiles.forEach(f => form.append('files', f));
 
   try {
-    const res = await fetch('http://localhost:8000/api/analyze', { method: 'POST', body: form });
+    const res = await fetch('https://ats-resume-scanner-final.onrender.com/api/analyze', {
+      method: 'POST',
+      body: form
+    });
     if (!res.ok) throw new Error('Server error');
     const data = await res.json();
     processedResults = data.results;
     displayResults();
     showAlert(`Analysis complete! ${processedResults.length} candidates ranked.`, 'success');
   } catch (e) {
-    showAlert('Failed to analyze. Is the Python server running?', 'error');
+    showAlert('Failed to analyze. Please check server connection.', 'error');
   } finally {
     document.getElementById('processingSection').style.display = 'none';
     document.getElementById('processBtn').disabled = false;
@@ -99,26 +106,26 @@ async function processResumes() {
 }
 
 function displayResults() {
-    const tbody = document.getElementById('resultsBody');
-    tbody.innerHTML = '';
-    processedResults.forEach((c) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td class="rank">${c.rank}</td>
-            <td><strong>${c.candidateName}</strong></td>
-            <td>${c.email}</td>
-            <td>${c.phone}</td>
-            <td>${c.degree}</td>
-            <td>${c.experience_years}</td>
-            <td>${c.skills_match}%</td>
-            <td>${c.education_match}%</td>
-            <td>${c.experience_score}%</td>
-            <td>${c.ats_format_score}%</td>
-            <td><strong>${c.total_score}%</strong></td>
-        `;
-        tbody.appendChild(row);
-    });
-    document.getElementById('resultsSection').style.display = 'block';
+  const tbody = document.getElementById('resultsBody');
+  tbody.innerHTML = '';
+  processedResults.forEach((c) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="rank">${c.rank}</td>
+      <td><strong>${c.candidateName}</strong></td>
+      <td>${c.email}</td>
+      <td>${c.phone}</td>
+      <td>${c.degree}</td>
+      <td>${c.experience_years}</td>
+      <td>${c.skills_match}%</td>
+      <td>${c.education_match}%</td>
+      <td>${c.experience_score}%</td>
+      <td>${c.ats_format_score}%</td>
+      <td><strong>${c.total_score}%</strong></td>
+    `;
+    tbody.appendChild(row);
+  });
+  document.getElementById('resultsSection').style.display = 'block';
 }
 
 async function downloadReport() {
@@ -132,11 +139,12 @@ async function downloadReport() {
     results: processedResults
   };
   try {
-    const res = await fetch('http://localhost:8000/api/report', {
+    const res = await fetch('https://ats-resume-scanner-final.onrender.com/api/report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    if (!res.ok) throw new Error("Report generation failed");
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -150,9 +158,16 @@ async function downloadReport() {
   } catch (e) {
     showAlert('Failed to download report.', 'error');
   }
+}
+
+// Test hello endpoint
 async function getElementById() {
-  let res=await
-  fetch("https://ats-resume-scanner-backend.onrender.com/api/hello")
-  let data =awaitres.json();
-  alert(data.message);
+  try {
+    let res = await fetch("https://ats-resume-scanner-final.onrender.com/api/hello");
+    if (!res.ok) throw new Error("Server error");
+    let data = await res.json();
+    alert(data.message);
+  } catch (err) {
+    alert("Failed to fetch: " + err.message);
   }
+}
