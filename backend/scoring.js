@@ -33,19 +33,17 @@ function tokenize(text) {
 
 function skillMatchScore(resume_text, required_skills) {
   const txt = norm(resume_text);
-  let total = required_skills.length;
-  if (total === 0) return 0;
-  let hits = 0;
   const toks = tokenize(txt);
+  let hits = 0;
+  const missing_skills = [];
   for (const s of required_skills) {
     const variants = expandSkill(s);
-    let found = variants.some(v => txt.includes(v));
-    if (!found) {
-      found = variants.some(v => toks.includes(v));
-    }
+    const found = variants.some(v => txt.includes(v) || toks.includes(v));
     if (found) hits++;
+    else missing_skills.push(s);
   }
-  return +(100.0 * (hits / total)).toFixed(2);
+  const score = required_skills.length ? +(100.0 * (hits / required_skills.length)).toFixed(2) : 0;
+  return { score, missing_skills };
 }
 
 function educationMatchScore(resume_degree, min_degree) {
@@ -58,12 +56,8 @@ function educationMatchScore(resume_degree, min_degree) {
 
 function experienceScore(exp_years, min_required) {
   if (!exp_years || exp_years <= 0) return 0.0;
-  if (!min_required) {
-    return Math.min(100.0, exp_years * 15);
-  }
-  if (exp_years >= min_required) {
-    return Math.min(100.0, 80 + (exp_years - min_required) * 5);
-  }
+  if (!min_required) return Math.min(100.0, exp_years * 15);
+  if (exp_years >= min_required) return Math.min(100.0, 80 + (exp_years - min_required) * 5);
   const pct = exp_years / Math.max(1, min_required);
   return Math.max(20.0, 100.0 * pct);
 }
@@ -76,12 +70,16 @@ function atsFormatScore(text, images_count, tables_count, contact, sections) {
   score += good_sections * 2.5;
   if (!contact || !contact.email || !contact.phone) score -= 15;
   if (!text || text.trim().length < 400) score -= 25;
-  score = Math.max(0, Math.min(100, score));
-  return +score.toFixed(2);
+  return +Math.max(0, Math.min(100, score)).toFixed(2);
+}
+
+// Advanced: job relevance (skill match weighted)
+function jobRelevanceScore(skill_score, ats_score) {
+  return +((skill_score * 0.7 + ats_score * 0.3).toFixed(2));
 }
 
 function analyzeResumeBatch(extractedList, options) {
-  const defaults = { weights: { skills:60, experience:20, education:10, ats:10 } };
+  const defaults = { weights: { skills:60, experience:20, education:10, ats:10, job_relevance:10 } };
   const weights = options.weights || defaults.weights;
   const reqSkills = options.required_skills || [];
   const min_degree = options.min_degree || '';
@@ -89,11 +87,15 @@ function analyzeResumeBatch(extractedList, options) {
 
   const results = extractedList.map((r, i) => {
     const txt = r.text || '';
-    const sm = skillMatchScore(txt, reqSkills);
+    const { score: sm, missing_skills } = skillMatchScore(txt, reqSkills);
     const em = educationMatchScore(r.degree || '', min_degree);
     const ex = experienceScore(r.experience_years || 0, min_exp);
     const ats = atsFormatScore(txt, r.images_count || 0, r.tables_count || 0, r.contact || {}, r.sections || {});
-    const total = ((sm * weights.skills) + (ex * weights.experience) + (em * weights.education) + (ats * weights.ats)) / (weights.skills + weights.experience + weights.education + weights.ats);
+    const jobRel = jobRelevanceScore(sm, ats);
+
+    const total = ((sm * weights.skills) + (ex * weights.experience) + (em * weights.education) + (ats * weights.ats) + (jobRel * weights.job_relevance)) /
+                  Object.values(weights).reduce((a,b)=>a+b,0);
+
     return {
       rank: i+1,
       filename: r.filename || `resume_${i+1}`,
@@ -106,7 +108,10 @@ function analyzeResumeBatch(extractedList, options) {
       education_match: +em.toFixed(2),
       experience_score: +ex.toFixed(2),
       ats_format_score: +ats.toFixed(2),
+      job_relevance: +jobRel.toFixed(2),
       total_score: +total.toFixed(2),
+      missing_skills,
+      summary: r.summary || '',
       weights
     };
   });
