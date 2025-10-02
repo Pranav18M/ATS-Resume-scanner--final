@@ -7,7 +7,9 @@ const { extractResume } = require('./parser_utils');
 const { analyzeResumeBatch } = require('./scoring');
 const { buildReportBuffer } = require('./report');
 
-// Configure multer (memory storage, max 20MB per file, max 500 files)
+// ---------- CONFIG ----------
+
+// Multer setup: memory storage, max 20MB per file
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 20 * 1024 * 1024 } // 20MB
@@ -15,19 +17,24 @@ const upload = multer({
 
 const app = express();
 
-// ✅ Stronger CORS handling
+// CORS setup
 app.use(cors({
-  origin: '*', // allow all origins (you can restrict to frontend URL later)
+  origin: '*', // you can restrict to your frontend URL
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// ✅ JSON limit increased for safety
+// JSON body parser
 app.use(express.json({ limit: '50mb' }));
 
 // ---------- ROUTES ----------
 
-// Analyze resumes endpoint
+// Health check / root route
+app.get('/', (req, res) => {
+  res.send({ status: 'OK', message: 'ATS Resume Scanner Backend is running' });
+});
+
+// Analyze resumes
 app.post('/api/analyze', upload.array('files', 500), async (req, res) => {
   try {
     const job_role = (req.body.job_role || '').trim();
@@ -76,7 +83,7 @@ app.post('/api/analyze', upload.array('files', 500), async (req, res) => {
       }
     }
 
-    // Analyze extracted data
+    // Analyze
     const results = analyzeResumeBatch(extracted, {
       job_role,
       required_skills,
@@ -101,7 +108,7 @@ app.post('/api/analyze', upload.array('files', 500), async (req, res) => {
   }
 });
 
-// Generate PDF report endpoint
+// Generate PDF report
 app.post('/api/report', async (req, res) => {
   try {
     const payload = req.body;
@@ -125,10 +132,12 @@ app.post('/api/report', async (req, res) => {
 });
 
 // ---------- SERVER START ----------
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`🚀 ATS Resume Scanner backend running on http://localhost:${PORT}`);
-  console.log(`👉 API Endpoints available:`);
-  console.log(`   POST http://localhost:${PORT}/api/analyze`);
-  console.log(`   POST http://localhost:${PORT}/api/report`);
+  console.log(`🚀 ATS Resume Scanner backend running on port ${PORT}`);
+  console.log(`👉 API Endpoints:`);
+  console.log(`   GET / -> Health check`);
+  console.log(`   POST /api/analyze -> Upload resumes`);
+  console.log(`   POST /api/report -> Generate PDF report`);
 });
