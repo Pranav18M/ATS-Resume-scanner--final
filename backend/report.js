@@ -6,6 +6,7 @@ async function buildReportBuffer(payload) {
   const doc = new PDFDocument({ margin: 40, size: 'A4' });
   const stream = doc.pipe(require('stream').PassThrough());
 
+  // Header
   doc.fontSize(18).text('ATS Resume Scanner Report', { align: 'left' });
   doc.moveDown(0.5);
   doc.fontSize(10).text(`Date: ${new Date().toLocaleDateString()}`);
@@ -20,38 +21,55 @@ async function buildReportBuffer(payload) {
   doc.text(`Min Degree: ${minDegree}    Min Experience: ${minExp}`);
   doc.moveDown(0.5);
 
-  const weights = payload.weights || { skills:60, experience:20, education:10, ats:10 };
-  doc.text(`Weights — Skills: ${weights.skills} | Experience: ${weights.experience} | Education: ${weights.education} | ATS: ${weights.ats}`);
-  doc.moveDown(0.5);
+  const weights = payload.weights || { skills: 60, experience: 20, education: 10, ats: 10 };
+  doc.text(
+    `Weights — Skills: ${weights.skills} | Experience: ${weights.experience} | Education: ${weights.education} | ATS: ${weights.ats}`
+  );
+  doc.moveDown(1);
 
+  // Table configuration
   const results = payload.results || [];
-  // table header
-  const tableTop = doc.y + 10;
-  const colWidths = [30, 110, 120, 80, 60, 50, 50];
-  // We'll draw a simple table by columns: Rank | Name | Email | Phone | Degree | Exp | Total
-  doc.fontSize(9).text('Rank', 40, tableTop);
-  doc.text('Candidate', 40 + 30, tableTop);
-  doc.text('Email', 40 + 140, tableTop);
-  doc.text('Phone', 40 + 260, tableTop);
-  doc.text('Degree', 40 + 360, tableTop);
-  doc.text('Exp', 40 + 420, tableTop);
-  doc.text('Total %', 40 + 460, tableTop);
-  doc.moveDown(0.5);
-  let y = tableTop + 18;
+  const startX = 40;
+  let y = doc.y + 10;
+  const rowHeight = 25;
+  const colWidths = [30, 110, 120, 100, 70, 40, 50]; // same as in your image
 
+  const headers = ['Rank', 'Candidate', 'Email', 'Phone', 'Degree', 'Exp', 'Total %'];
+
+  // Draw table headers with borders
+  let x = startX;
+  doc.fontSize(9).font('Helvetica-Bold');
+  headers.forEach((h, i) => {
+    doc.rect(x, y, colWidths[i], rowHeight).stroke();
+    doc.text(h, x + 3, y + 7, { width: colWidths[i] - 6, align: 'left' });
+    x += colWidths[i];
+  });
+
+  y += rowHeight;
+  doc.font('Helvetica');
+
+  // Draw table rows
   for (const r of results.slice(0, 200)) {
     if (y > 720) {
       doc.addPage();
       y = 40;
     }
-    doc.fontSize(9).text(r.rank.toString(), 40, y);
-    doc.text(r.candidateName, 40 + 30, y, { width: 100 });
-    doc.text(r.email || '-', 40 + 140, y, { width: 110 });
-    doc.text(r.phone || '-', 40 + 260, y, { width: 90 });
-    doc.text(r.degree || '-', 40 + 360, y, { width: 60 });
-    doc.text(String(r.experience_years || '-'), 40 + 420, y, { width: 40 });
-    doc.text(String(r.total_score || '-'), 40 + 460, y, { width: 40 });
-    y += 18;
+    x = startX;
+    const rowValues = [
+      r.rank || '-',
+      r.candidateName || '-',
+      r.email || '-',
+      r.phone || '-',
+      r.degree || '-',
+      r.experience_years || '-',
+      r.total_score || '-',
+    ];
+    rowValues.forEach((val, i) => {
+      doc.rect(x, y, colWidths[i], rowHeight).stroke();
+      doc.text(String(val), x + 3, y + 7, { width: colWidths[i] - 6, align: 'left' });
+      x += colWidths[i];
+    });
+    y += rowHeight;
   }
 
   doc.end();
@@ -59,4 +77,4 @@ async function buildReportBuffer(payload) {
   return buffer;
 }
 
-module.exports = { buildReportBuffer }
+module.exports = { buildReportBuffer };
