@@ -3,97 +3,213 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ATS Resume Scanner</title>
+  <title>ATS Resume Scanner - AI Powered</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Splash Screen with Door Animation -->
+  <div class="splash-screen" id="splashScreen">
+    <div class="door-container">
+      <div class="door door-left">
+        <div class="door-content">
+          <h1 class="splash-title">ATS</h1>
+        </div>
+      </div>
+      <div class="door door-right">
+        <div class="door-content">
+          <h1 class="splash-title">Resume Scanner</h1>
+        </div>
+      </div>
+    </div>
+    <div class="splash-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <!-- Animated Background -->
+    <div class="background-animation">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
   <div class="container">
-    <div class="header">
-      <h1>📄 ATS Resume Scanner</h1>
-      <p>AI-Powered Resume Analysis & Ranking System</p>
-    </div>
-
-    <div class="card">
-      <div class="upload-section">
-        <div class="hr-config" style="margin-bottom:20px; text-align:left">
-          <h3>HR Requirements</h3>
-          <label>Job Role</label>
-          <input id="jobRole" type="text" placeholder="e.g., Backend Developer" style="width:100%; padding:10px; margin:6px 0;" />
-          <label>Required Skills (comma separated)</label>
-          <input id="requiredSkills" type="text" placeholder="e.g., Node.js, Express, MongoDB" style="width:100%; padding:10px; margin:6px 0;" />
-          <div style="display:flex; gap:10px; flex-wrap:wrap">
-            <div style="flex:1">
-              <label>Min Degree (optional)</label>
-              <select id="minDegree" style="width:100%; padding:10px; margin:6px 0;">
-                <option value="">None</option>
-                <option>Bachelors</option>
-                <option>Masters</option>
-                <option>PhD</option>
-              </select>
-            </div>
-            <div style="flex:1">
-              <label>Min Experience (years, optional)</label>
-              <input id="minExp" type="number" min="0" step="1" placeholder="e.g., 2" style="width:100%; padding:10px; margin:6px 0;" />
-            </div>
-          </div>
+    <!-- Header with Glassmorphism -->
+    <header class="glass-header">
+      <div class="logo-section">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
         </div>
-
-        <div class="upload-area" id="uploadArea">
-          <div class="upload-icon">📤</div>
-          <div class="upload-text">
-            <h3>Upload Resume Files</h3>
-            <p>Drop PDF or DOCX files here or click to browse</p>
-            <p style="font-size: 0.9rem; color: #999;">Maximum 500 files • Supported formats: PDF, DOCX</p>
-          </div>
+       <div class="logo-text">
+        <center>   <h1>ATS Resume Scanner</h1>
+          <p>AI-Powered Intelligent Recruitment System</p></div></center>
         </div>
-        <input type="file" id="fileInput" multiple accept=".pdf,.docx" />
-
-        <div class="file-info" id="fileInfo">
-          <p><strong id="fileCount">0</strong> files selected</p>
-          <button class="btn" id="processBtn" onclick="processResumes()">🔍 Start ATS Analysis</button>
-        </div>
-
-        <div class="alert alert-error" id="errorAlert"></div>
-        <div class="alert alert-success" id="successAlert"></div>
       </div>
-    </div>
+     
+    </header>
 
-    <div class="card">
-      <div class="processing" id="processingSection">
-        <div class="spinner"></div>
-        <h3>Analyzing Resumes...</h3>
-        <p>Extracting data, checking ATS compatibility, and ranking candidates</p>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
+    <!-- HR Configuration Card -->
+    <div class="glass-card config-card">
+      <div class="card-header">
+        <div class="header-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
         </div>
-        <p id="progressText">Processing: 0 / 0 resumes</p>
-      </div>
-    </div>
-
-    <div class="card results-section" id="resultsSection">
-      <div class="results-header">
         <div>
-          <h3>ATS Analysis Results</h3>
-          <p>Top candidates ranked by ATS score</p>
+          <h2>Job Requirements</h2>
+          <p>Define your ideal candidate profile</p>
         </div>
-        <button class="btn download-btn" onclick="downloadReport()">📥 Download Report</button>
       </div>
 
-      <div class="table-container">
+      <div class="config-grid">
+        <div class="input-group full-width">
+          <label for="jobRole">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            Job Role
+          </label>
+          <input id="jobRole" type="text" placeholder="e.g., Senior Full-Stack Developer" />
+        </div>
+
+        <div class="input-group full-width">
+          <label for="requiredSkills">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+            Required Skills
+          </label>
+          <input id="requiredSkills" type="text" placeholder="e.g., React, Node.js, TypeScript, AWS, Docker" />
+        </div>
+
+        <div class="input-group">
+          <label for="minDegree">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+            </svg>
+            Minimum Degree
+          </label>
+          <select id="minDegree">
+            <option value="">Not Required</option>
+            <option>Bachelors</option>
+            <option>Masters</option>
+            <option>PhD</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="minExp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Years of Experience
+          </label>
+          <input id="minExp" type="number" min="0" step="1" placeholder="e.g., 3" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Card -->
+    <div class="glass-card upload-card">
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon-animated">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+          </svg>
+        </div>
+        <h3>Drop Your Resumes Here</h3>
+        <p>or click to browse your files</p>
+        <div class="upload-specs">
+          <span class="spec-badge">PDF</span>
+          <span class="spec-badge">DOCX</span>
+          <span class="spec-badge">Max 500 files</span>
+        </div>
+      </div>
+      <input type="file" id="fileInput" multiple accept=".pdf,.docx" />
+
+      <div class="file-info" id="fileInfo">
+        <div class="file-counter">
+          <div class="counter-circle">
+            <span id="fileCount">0</span>
+          </div>
+          <span>Files Ready</span>
+        </div>
+        <button class="btn-primary" id="processBtn" onclick="processResumes()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+          Start ATS Analysis
+        </button>
+      </div>
+
+      <div class="alert alert-error" id="errorAlert"></div>
+      <div class="alert alert-success" id="successAlert"></div>
+    </div>
+
+    <!-- Processing Card -->
+    <div class="glass-card processing-card" id="processingSection">
+      <div class="processing-content">
+        <div class="processing-animation">
+          <div class="scan-line"></div>
+          <svg class="processing-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <h3>Analyzing Resumes</h3>
+        <p>AI is extracting data and ranking candidates</p>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <span class="progress-label" id="progressText">Processing: 0 / 0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Card -->
+    <div class="glass-card results-card" id="resultsSection">
+      <div class="results-header">
+        <div class="results-title">
+          <div class="header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Analysis Results</h2>
+            <p>Top candidates ranked by ATS compatibility</p>
+          </div>
+        </div>
+        <button class="btn-success" onclick="downloadReport()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Export Report
+        </button>
+      </div>
+
+      <div class="table-wrapper">
         <table id="resultsTable">
           <thead>
             <tr>
               <th>Rank</th>
-              <th>Candidate Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Degree</th>
-              <th>Experience (yrs)</th>
-              <th>Skills %</th>
-              <th>Edu %</th>
-              <th>Exp %</th>
-              <th>ATS %</th>
-              <th>Total %</th>
+              <th>Candidate</th>
+              <th>Contact</th>
+              <th>Education</th>
+              <th>Experience</th>
+              <th>Skills Match</th>
+              <th>Education Score</th>
+              <th>Experience Score</th>
+              <th>ATS Score</th>
+              <th>Total Score</th>
             </tr>
           </thead>
           <tbody id="resultsBody"></tbody>
@@ -101,21 +217,36 @@
       </div>
     </div>
 
-    <div class="features">
+    <!-- Features Section -->
+    <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h4>Smart Parsing</h4>
-        <p>Extracts candidate data, skills, education, and experience from PDF/DOCX files using heuristics</p>
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+          </svg>
+        </div>
+        <h3>AI-Powered Parsing</h3>
+        <p>Advanced algorithms extract candidate information with high accuracy from any resume format</p>
       </div>
+
       <div class="feature-card">
-        <div class="feature-icon">✅</div>
-        <h4>ATS Compatibility</h4>
-        <p>Identifies formatting issues and ATS-friendliness problems that could cause resume rejection</p>
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+        </div>
+        <h3>ATS Compatibility Check</h3>
+        <p>Identifies formatting issues and ensures resumes meet industry ATS standards</p>
       </div>
+
       <div class="feature-card">
-        <div class="feature-icon">⭐</div>
-        <h4>Smart Ranking</h4>
-        <p>Scores and ranks candidates based on skills relevance, education, experience, and ATS compatibility</p>
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+          </svg>
+        </div>
+        <h3>Intelligent Ranking</h3>
+        <p>Multi-factor scoring system ranks candidates based on skills, education, and experience</p>
       </div>
     </div>
   </div>
