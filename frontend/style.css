@@ -28,7 +28,6 @@ body {
     overflow-x: hidden;
     position: relative;
 }
-
 /* ===== SPLASH SCREEN WITH DOOR ANIMATION ===== */
 .splash-screen {
     position: fixed;
@@ -41,7 +40,7 @@ body {
     align-items: center;
     justify-content: center;
     background: #0f172a;
-    animation: fadeOutSplash 0.5s ease-out 2.8s forwards;
+    animation: fadeOutSplash 1s ease-out 3.8s forwards; /* added 1s extra hold */
 }
 
 .door-container {
@@ -75,13 +74,13 @@ body {
 
 .door-left {
     transform-origin: left center;
-    animation: openDoorLeft 1s ease-in-out 1.8s forwards;
+    animation: openDoorLeft 1.8s cubic-bezier(0.77, 0, 0.175, 1) 1.8s forwards; /* slower & smoother */
     border-right: 2px solid rgba(99, 102, 241, 0.5);
 }
 
 .door-right {
     transform-origin: right center;
-    animation: openDoorRight 1s ease-in-out 1.8s forwards;
+    animation: openDoorRight 1.8s cubic-bezier(0.77, 0, 0.175, 1) 1.8s forwards; /* slower & smoother */
     border-left: 2px solid rgba(99, 102, 241, 0.5);
 }
 
@@ -113,7 +112,7 @@ body {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-shadow: 0 0 60px rgba(99, 102, 241, 0.6);
-    animation: titleGlow 2s ease-in-out infinite;
+    animation: titleGlow 2.5s ease-in-out infinite; /* slightly slower glow */
     letter-spacing: 3px;
     line-height: 1.2;
     position: relative;
@@ -122,12 +121,12 @@ body {
 
 .door-left .splash-title {
     text-align: right;
-    animation: slideInLeft 0.8s ease-out;
+    animation: slideInLeft 1s ease-out; /* slower slide */
 }
 
 .door-right .splash-title {
     text-align: left;
-    animation: slideInRight 0.8s ease-out;
+    animation: slideInRight 1s ease-out; /* slower slide */
 }
 
 .splash-title::after {
@@ -138,7 +137,7 @@ body {
     height: 4px;
     background: linear-gradient(90deg, transparent, var(--primary), transparent);
     border-radius: 2px;
-    animation: lineExpand 1.5s ease-in-out infinite;
+    animation: lineExpand 2s ease-in-out infinite; /* slower */
 }
 
 .door-left .splash-title::after {
@@ -163,7 +162,7 @@ body {
         0 0 0 25px rgba(99, 102, 241, 0.15),
         0 0 0 50px rgba(99, 102, 241, 0.08),
         inset 0 0 60px rgba(255, 255, 255, 0.1);
-    animation: logoFloat 3s ease-in-out infinite;
+    animation: logoFloat 4s ease-in-out infinite; /* slower float */
     z-index: 10;
     border: 3px solid rgba(255, 255, 255, 0.2);
 }
@@ -182,7 +181,7 @@ body {
         transparent
     );
     border-radius: 50%;
-    animation: rotate 4s linear infinite;
+    animation: rotate 6s linear infinite; /* slower rotation */
 }
 
 .splash-logo svg {
@@ -192,108 +191,59 @@ body {
     filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
     position: relative;
     z-index: 1;
-    animation: iconBounce 2s ease-in-out infinite;
+    animation: iconBounce 2.5s ease-in-out infinite; /* slower bounce */
 }
 
+/* ===== KEYFRAMES ===== */
 @keyframes slideInLeft {
-    0% {
-        opacity: 0;
-        transform: translateX(-100px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    0% { opacity: 0; transform: translateX(-120px); }
+    100% { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideInRight {
-    0% {
-        opacity: 0;
-        transform: translateX(100px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    0% { opacity: 0; transform: translateX(120px); }
+    100% { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes openDoorLeft {
-    0% {
-        transform: perspective(1000px) rotateY(0deg);
-    }
-    100% {
-        transform: perspective(1000px) rotateY(-100deg);
-    }
+    0% { transform: perspective(1000px) rotateY(0deg); }
+    100% { transform: perspective(1000px) rotateY(-100deg); }
 }
 
 @keyframes openDoorRight {
-    0% {
-        transform: perspective(1000px) rotateY(0deg);
-    }
-    100% {
-        transform: perspective(1000px) rotateY(100deg);
-    }
+    0% { transform: perspective(1000px) rotateY(0deg); }
+    100% { transform: perspective(1000px) rotateY(100deg); }
 }
 
 @keyframes titleGlow {
-    0%, 100% {
-        filter: brightness(1) drop-shadow(0 0 20px rgba(99, 102, 241, 0.5));
-    }
-    50% {
-        filter: brightness(1.2) drop-shadow(0 0 40px rgba(99, 102, 241, 0.8));
-    }
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 20px rgba(99, 102, 241, 0.5)); }
+    50% { filter: brightness(1.2) drop-shadow(0 0 40px rgba(99, 102, 241, 0.8)); }
 }
 
 @keyframes lineExpand {
-    0%, 100% {
-        transform: scaleX(0.5);
-        opacity: 0.5;
-    }
-    50% {
-        transform: scaleX(1);
-        opacity: 1;
-    }
+    0%, 100% { transform: scaleX(0.5); opacity: 0.5; }
+    50% { transform: scaleX(1); opacity: 1; }
 }
 
 @keyframes logoFloat {
-    0%, 100% {
-        transform: translateY(0) scale(1) rotate(0deg);
-    }
-    33% {
-        transform: translateY(-15px) scale(1.05) rotate(5deg);
-    }
-    66% {
-        transform: translateY(-10px) scale(0.98) rotate(-3deg);
-    }
+    0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+    33% { transform: translateY(-15px) scale(1.05) rotate(5deg); }
+    66% { transform: translateY(-10px) scale(0.98) rotate(-3deg); }
 }
 
 @keyframes iconBounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-8px);
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
 }
 
 @keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 @keyframes fadeOutSplash {
-    0% {
-        opacity: 1;
-        visibility: visible;
-    }
-    100% {
-        opacity: 0;
-        visibility: hidden;
-    }
+    0% { opacity: 1; visibility: visible; }
+    100% { opacity: 0; visibility: hidden; }
 }
 
 /* ===== MAIN CONTENT ===== */
