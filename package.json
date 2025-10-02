@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "compromise": "^14.14.4",
-    "csv-writer": "^1.6.0",
-    "get-stream": "^9.0.1",
-    "natural": "^8.1.0",
-    "pdfkit": "^0.17.2"
-  }
-}
